@@ -29,7 +29,10 @@ Type card::get_type() {
 	return cardType;
 }
 
-void card::draw_card_image(Vector2 pos, Vector2 size) {
+void card::DrawCardImage(Vector2 pos, Vector2 size) {
 	DrawRectangleV(pos, size, LIGHTGRAY);
+
+	DrawText(type_to_string(cardType).c_str(), pos.x + 10, pos.y + 10, 20, BLACK);
+	DrawText(TextFormat("Level %i", cardRank + 1), pos.x + 10, pos.y + 40, 20, BLACK);
 
 }

@@ -16,7 +16,7 @@ public:
 
 	std::string type_to_string(Type s);
 
-	void draw_card_image(Vector2 pos, Vector2 size);
+	void DrawCardImage(Vector2 pos, Vector2 size);
 
 private:
 	int cardRank;
