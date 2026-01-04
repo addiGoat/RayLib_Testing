@@ -20,6 +20,6 @@ public:
 	void shuffle();
 
 	card draw_card();
-	std::string remaining() const;
+	size_t remaining() const;
 	size_t discards() const;
 };

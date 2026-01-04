@@ -2,22 +2,26 @@
 #include "raylib.h"
 #include "Deck.h"
 #include "Button.h"
+#include "Game.h"
 
 #define DRAW_BUTTON_WIDTH 100
 #define DRAW_BUTTON_HEIGHT 100
 #define DRAW_BUTTON_X 600
 #define DRAW_BUTTON_Y 500
 
-enum class GamePhase {
-	WAITING_FOR_DRAW,
-	CARD_DRAWN,
-	RESOLVING_CARD
-};
+// ===== Redundant, moved to Game.h =====
+//enum class GamePhase { 
+//	WAITING_FOR_DRAW,
+//	CARD_DRAWN,
+//	RESOLVING_CARD
+//};
 
 
 int main() {
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
+
+	Game game; // Initializes main game object
 
 	// Main draw button parameters
 	Vector2 buttonSize = { DRAW_BUTTON_WIDTH, DRAW_BUTTON_HEIGHT };
@@ -30,8 +34,8 @@ int main() {
 	float cardSpacing = 120.0f; // Spacing between drawn cards
 
 	
-	deck deck; //main deck of cards remaining
-	std::string deckSize = deck.remaining();
+	//deck deck; //main deck of cards remaining
+	//std::string deckSize = deck.remaining();
 
 
 
@@ -39,17 +43,17 @@ int main() {
 	
 	std::vector<card> cardRow; //currently active hands in "room"
 	
-	GamePhase currentPhase = GamePhase::WAITING_FOR_DRAW; //sets the current phase of the game
+	// GamePhase currentPhase = GamePhase::WAITING_FOR_DRAW; //sets the current phase of the game
 	
 
 	// Creates main draw button and assigns functionality to onClick event
-	Button myButton(buttonPos, buttonSize, drawButtonStyle);
-	myButton.onClick = [&]() {
-		if (currentPhase != GamePhase::WAITING_FOR_DRAW) return; // cancels event when button not active (wrong phase)
-		if (cardRow.size() < 4) cardRow.push_back(deck.draw_card()); //draws card if less than 4 cards in row
-		if (cardRow.size() >= 4) currentPhase = GamePhase::CARD_DRAWN; //moves to next phase when 4 cards drawn
-		deckSize = deck.remaining();
-		};
+	//Button myButton(buttonPos, buttonSize, drawButtonStyle);
+	//myButton.onClick = [&]() {
+	//	if (currentPhase != GamePhase::WAITING_FOR_DRAW) return; // cancels event when button not active (wrong phase)
+	//	if (cardRow.size() < 4) cardRow.push_back(deck.draw_card()); //draws card if less than 4 cards in row
+	//	if (cardRow.size() >= 4) currentPhase = GamePhase::CARD_DRAWN; //moves to next phase when 4 cards drawn
+	//	deckSize = deck.remaining();
+	//	};
 
 	Vector2 mousePoint = { 0.0f, 0.0f };
 
@@ -63,7 +67,18 @@ int main() {
 	// Main game loop
 	while (!WindowShouldClose()) {
 
+		game.Update();
 
+		BeginDrawing();
+		ClearBackground(DARKGRAY);
+		game.Draw();
+
+
+
+
+
+
+/*
 		// ====================================
 		// =              UPDATE			  =
 		// ====================================
@@ -97,7 +112,7 @@ int main() {
 		if (currentPhase == GamePhase::WAITING_FOR_DRAW) myButton.DrawButton("Draw"); // Shows "draw" button when gamestate = waiting for draw
 
 
-		
+		*/
 		// ==== MOUSE POS DEBUG ====
 		Vector2 mp = GetMousePosition();
 		int crossSize = 10; // Crosshair length

@@ -35,8 +35,8 @@ card deck::draw_card() {
 	return drawnCard;
 }
 
-std::string deck::remaining() const {
-	std::string remaining = std::to_string(main_deck.size());
+size_t deck::remaining() const {
+	size_t remaining = main_deck.size();
 	return remaining;
 }
 size_t deck::discards() const {

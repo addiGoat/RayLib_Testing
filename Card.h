@@ -7,19 +7,20 @@ enum Type { MONSTER, POTION, WEAPON, PLACEHOLDER };
 class card
 {
 public:
+	card(); // Default constructor
 	card(int r, int s);
 
 	std::string type_to_string(Type s);
 
-	void DrawCardImage(Vector2 pos, Vector2 size);
+	void DrawCardImage(Vector2 pos, Vector2 size, Color color);
+
+	int get_rank() const;
+	Type get_type() const;
 
 private:
 	int cardRank;
 	Type cardType;
 
-	int get_rank();
-	Type get_type();
-	
 	void print_info() const;
 };
 

@@ -1,6 +1,5 @@
 #pragma once
 #include <functional> // for std::function
-#include "Card.h"
 #include "raylib.h"
 
 struct ButtonStyle {

@@ -19,16 +19,22 @@ card::card(int r, int s) {
 	cardType = static_cast<Type>(s);
 }
 
-int card::get_rank() {
+// Default constructor for no input
+card::card() {
+	cardRank = 0;
+	cardType = PLACEHOLDER;
+}
+
+int card::get_rank() const {
 	return cardRank + 1;
 }
 
-Type card::get_type() {
+Type card::get_type() const {
 	return cardType;
 }
 
-void card::DrawCardImage(Vector2 pos, Vector2 size) {
-	DrawRectangleV(pos, size, RED); // Draw card background
+void card::DrawCardImage(Vector2 pos, Vector2 size, Color color) {
+	DrawRectangleV(pos, size, color); // Draw card background
 	DrawText(type_to_string(cardType).c_str(), pos.x + 10, pos.y + 10, 20, BLACK); // Draw card type
 	DrawText(TextFormat("Level %i", cardRank + 1), pos.x + 10, pos.y + 40, 20, BLACK); // Draw card rank
 

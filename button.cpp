@@ -29,5 +29,5 @@ void Button::UpdateButtonState(Vector2 mousePos){
 
 void Button::DrawButton(const char* buttonText) {
 	DrawRectangleRec(buttonBounds, buttonColor);
-	DrawText(buttonText, buttonBounds.x + 10, buttonBounds.y + 10, 20, WHITE);
+	DrawText(buttonText, (float)buttonBounds.x + 10, (float)buttonBounds.y + 10, 20, WHITE);
 }
