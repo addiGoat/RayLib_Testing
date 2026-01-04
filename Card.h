@@ -8,11 +8,6 @@ class card
 {
 public:
 	card(int r, int s);
-	
-	void print_info() const;
-
-	int get_rank();
-	Type get_type();
 
 	std::string type_to_string(Type s);
 
@@ -21,5 +16,10 @@ public:
 private:
 	int cardRank;
 	Type cardType;
+
+	int get_rank();
+	Type get_type();
+	
+	void print_info() const;
 };
 
