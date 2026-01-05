@@ -1,6 +1,5 @@
 #include "Game.h"
-#include "raylib.h" 
-#include <iostream>
+#include "raylib.h"
 
 Game::Game() 
 	: drawButton(
@@ -36,74 +35,36 @@ Game::Game()
 
 		default: return; // Default case to handle unexpected phases
 		}
-	};
-
-}
-
-// ====================================
-// *              UPDATE			  *
-// ====================================
-void Game::InteractWithCard(size_t index) {
-	if (index >= cardRow.size()) return; // Invalid index
-
-	Type t = cardRow[index].get_type();
-	int rank = cardRow[index].get_rank();
-
-	std::cout << "Interacted with card #" << index + 1 << " (type=" << cardRow[index].type_to_string(t) << ", rank=" << rank << ")\n";
+		};
 
 }
 
 void Game::Update() {
 	Vector2 mousePos = GetMousePosition();
 	drawButton.UpdateButtonState(mousePos);
-
-	hoveredCardIndex = -1;
-
-	for (size_t i = 0; i < cardRow.size(); i++) {
-		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-		Rectangle cardRect = { cardPos.x, cardPos.y, cardSize.x, cardSize.y };
-
-		if (CheckCollisionPointRec(mousePos, cardRect)) {
-			hoveredCardIndex = (int)i;
-			if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-				InteractWithCard(i);
-				break;
-			} 
-			break;
-		}
-	}
 }	
-
-
-
-// ====================================
-// *               DRAW               *
-// ====================================
 
 void Game::Draw() {
 
 	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
 
 	switch (currentPhase) {
-		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
 		drawButton.DrawButton("Draw");
 		if (cardRow.size() > 0) {
 			for (size_t i = 0; i < cardRow.size(); i++) {
 				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-				Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : cardColor;
-				cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+				cardRow[i].DrawCardImage(cardPos, cardSize, cardColor);
 			}
 		}
 		break;
-		// Draws all cards when hand is full, reads "Discard" on button
+
 	case GamePhase::CARD_DRAWN:
-		drawButton.DrawButton("Discard");
+		drawButton.DrawButton("Reset");
 		if (cardRow.size() > 0) {
 			for (size_t i = 0; i < cardRow.size(); i++) {
 				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-				Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : cardColor;
-				cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+				cardRow[i].DrawCardImage(cardPos, cardSize, cardColor);
 			}
 		}
 		

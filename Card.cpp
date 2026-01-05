@@ -7,7 +7,6 @@ const char* card::type_to_string(Type t) {
 	case MONSTER: return "Monster";
 	case WEAPON: return "Weapon";
 	case POTION: return "Potion";
-	case PLACEHOLDER: return "oopies";
 	default: return "INVALID";
 
 	} 
@@ -22,7 +21,7 @@ card::card(int r, int s) {
 // Default constructor for no input
 card::card() {
 	cardRank = 0;
-	cardType = PLACEHOLDER;
+	cardType;
 }
 
 int card::get_rank() const {
@@ -57,8 +56,12 @@ void card::DrawCardImage(Vector2 pos, Vector2 size, Color color) {
 
 	// ========== Rank text at center ==========
 
+	const char* rankText;
+
+
 	int rankFontSize = 72;
-	const char* rankText = TextFormat("%i", cardRank + 1);
+	if (cardRank == 13) { rankText = "A"; }
+	else rankText = TextFormat("%i", cardRank + 2);
 	
 	int textW = MeasureText(rankText, rankFontSize);
 

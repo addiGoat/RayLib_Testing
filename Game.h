@@ -25,13 +25,15 @@ private:
 	GamePhase currentPhase;
 	Button drawButton;
 
-	Color cardColor = SKYBLUE;
+	Color cardColor = CARD_COLOR_IDLE;
 
 	size_t deckSize;
 
 	deck mainDeck;
 
 	void InteractWithCard(size_t index);
+
+	int hoveredCardIndex = -1;
 
 
 	std::vector<card> cardRow;

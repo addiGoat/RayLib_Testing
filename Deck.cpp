@@ -1,8 +1,23 @@
 #include "Deck.h"
 
 void deck::generate_type(int s) {
-	for (int currentRank = 0; currentRank <= 12; currentRank++) {
-		main_deck.emplace_back(currentRank, s);
+	
+	if (s == 0) {
+		for (int t = 0; t <= 1; t++) {
+			for (int i = 0; i <= 12; i++) {
+				main_deck.emplace_back(i, s); // Monster cards
+			}
+		}
+	}
+	else if (s == 1) { 
+		for (int i = 0; i <= 8; i++) {
+			main_deck.emplace_back(i, s); // Potion cards
+		}
+	}
+	else if (s == 2){
+		for (int i = 0; i <= 8; i++) {
+			main_deck.emplace_back(i, s); // Weapon cards
+		}
 	}
 }
 
@@ -10,7 +25,7 @@ deck::deck() {
 	std::random_device rd;
 	gen = std::mt19937(rd());
 
-	for (int typeInt = 0; typeInt <= 3; typeInt++) {
+	for (int typeInt = 0; typeInt <= 2; typeInt++) {
 		generate_type(typeInt);
 	}
 

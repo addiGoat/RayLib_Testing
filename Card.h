@@ -2,7 +2,10 @@
 #include <string>
 #include "raylib.h"
 
-enum Type { MONSTER, POTION, WEAPON, PLACEHOLDER };
+#define CARD_COLOR_IDLE SKYBLUE
+#define CARD_COLOR_HOVER YELLOW
+
+enum Type { MONSTER, POTION, WEAPON };
 
 class card
 {
