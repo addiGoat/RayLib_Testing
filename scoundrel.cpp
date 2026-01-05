@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 #include "raylib.h"
 #include "Deck.h"
 #include "Button.h"
@@ -24,7 +25,8 @@ int main() {
 
 
 	// Initialize main game object
-	Game game;
+	std::optional<Game> game;
+	game.emplace();
 
 
 
@@ -42,7 +44,13 @@ int main() {
 	// *              UPDATE			  *
 	// ====================================
 
-		game.Update();
+		game->Update();
+
+		// Sets new game object if restart is requested
+		if (game->WantsRestart()) {
+
+			game.emplace();
+		}
 
 	// ====================================
 	// *               DRAW				  *
@@ -50,7 +58,7 @@ int main() {
 
 		BeginDrawing();
 		ClearBackground(DARKGRAY);
-		game.Draw(); // Draws main game elements
+		game->Draw(); // Draws main game elements
 
 		// ==== MOUSE POS DEBUG ====
 		Vector2 mp = GetMousePosition();

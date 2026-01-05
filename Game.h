@@ -18,6 +18,12 @@ enum class GamePhase {
 	FULL_ROOM
 };
 
+enum class GameState {
+	PLAYING,
+	GAME_OVER,
+	VICTORY
+};
+
 
 class Game {
 public:
@@ -26,9 +32,18 @@ public:
 	void Update();
 	void Draw();
 
+	bool WantsRestart() const;
+	
+
 private:
 	GamePhase currentPhase;
+	GameState currentState;
+
 	Button runButton;
+	Button resetButton;
+
+	bool wantsRestart = false;
+	
 
 	void FillRowToMax();
 
