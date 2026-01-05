@@ -1,5 +1,6 @@
 #pragma once
 #include "raylib.h"
+#include <iostream>
 #include <algorithm>
 
 
@@ -11,7 +12,7 @@ public:
 
 
 	int weaponDamage = 0;
-	bool isFirstAttack = true;
+	bool weaponRecentlyEquipped = false;
 
 	int HP() const { return hp; }
 	int maxHP() const { return maxHp; }
@@ -19,25 +20,63 @@ public:
 	int WeaponDamage() const { return weaponDamage; }
 	
 
-	void Damage(int amount) {
-		hp = std::max(0, hp - amount);
-	}
+	// Being replaced by Attack method
+	//void Damage(int amount) { 
+	//	hp = std::max(0, hp - amount);
+	//}
 
-	void AttackFull(int amount) {
-		hp = std::max(0, hp - (amount - weaponDamage));
+	void Attack(int amount) {
+
+		int monsterDmg = amount;
+
+
+		// Weapon equipped
+		if (weaponDamage != 0) {
+
+			// First attack after equipping weapon
+			if (weaponRecentlyEquipped) {
+				weaponRecentlyEquipped = false;
+
+				// If attack damage is higher than weapon damage, apply remaining damage to player
+				if (amount > weaponDamage) {
+					hp = std::max(0, hp - (amount - weaponDamage));
+					weaponDamage = amount; return;
+				}
+			}
+
+			// Subsequent attacks
+			else if (!weaponRecentlyEquipped) {
+
+				// If attack damage is higher than or equal to weapon damage, force player to fight barehanded
+				if (amount >= weaponDamage) {
+					hp = std::max(0, hp - amount); return; // Full damage applied to player
+				}
+			}
+			weaponDamage = amount;
+		}
+
+
+		// No weapon equipped
+		else {
+			hp = std::max(0, hp - amount);
+		}
 	}
 	void Heal(int amount) {
 		hp = std::min(maxHp, hp + amount);
 	}
 	void Equip(int dmg) {
 		weaponDamage = dmg;
+		weaponRecentlyEquipped = true;
 	}
 	void Reset() {
 		hp = maxHp;
 	}
 
 	void DrawEquippedWeapon() {		
-		DrawRectangleRec(weaponRect, BLUE);
+
+		Color weaponColor = BLUE;
+		if (!weaponRecentlyEquipped) weaponColor = RED;
+		DrawRectangleRec(weaponRect, weaponColor);
 
 		int weaponFontSize = 22;
 
@@ -55,8 +94,8 @@ public:
 
 
 		int rankFontSize = 72;
-		if (weaponDamage == 12) { rankText = "A"; }
-		else rankText = TextFormat("%i", weaponDamage + 1);
+		if (weaponDamage == 14) { rankText = "A"; }
+		else rankText = TextFormat("%i", weaponDamage);
 
 		int textW = MeasureText(rankText, rankFontSize);
 

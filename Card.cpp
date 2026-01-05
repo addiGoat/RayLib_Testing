@@ -25,7 +25,7 @@ card::card() {
 }
 
 int card::get_rank() const {
-	return cardRank + 1;
+	return cardRank + 2;
 }
 
 Type card::get_type() const {
@@ -61,7 +61,7 @@ void card::DrawCardImage(Vector2 pos, Vector2 size, Color color) {
 
 	int rankFontSize = 72;
 	if (cardRank == 12) { rankText = "A"; }
-	else rankText = TextFormat("%i", cardRank + 2);
+	else rankText = TextFormat("%i", card::get_rank());
 	
 	int textW = MeasureText(rankText, rankFontSize);
 

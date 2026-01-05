@@ -53,15 +53,12 @@ void Game::InteractWithCard(size_t index) {
 	if (index >= cardSlots.size()) return; // Invalid index
 	if (!cardSlots[index].has_value()) return; // No card in this slot
 	
+
+	// get_rank returns rank + 2 (a 2-14 value), so no need to add 1 for weapon and monster
 	switch (cardSlots[index]->get_type()) {
-	case MONSTER: 
-		if (player.weaponDamage > cardSlots[index]->get_rank()) {
-			player.AttackFull(cardSlots[index]->get_rank() + 1);
-		} // CURRENTLY WORKING ON, PICK UP HERE DUMBO =============================
-		else
-		player.Damage(cardSlots[index]->get_rank() + 1); break;
+	case MONSTER: player.Attack(cardSlots[index]->get_rank()); break;
 	case WEAPON: player.Equip(cardSlots[index]->get_rank());  break;
-	case POTION: player.Heal(cardSlots[index]->get_rank() + 1); break;
+	case POTION: player.Heal(cardSlots[index]->get_rank()); break;
 	}
 
 
@@ -142,12 +139,12 @@ void Game::Draw() {
 	switch (currentPhase) {
 		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
-		//drawButton.DrawButton("Draw");
+		drawButton.DrawButton("Draw");
 		
 		break;
 		// Draws all cards when hand is full, reads "Discard" on button
 	case GamePhase::WAITING_FOR_ACTION:
-		//drawButton.DrawButton("Discard");
+		drawButton.DrawButton("Discard");
 		
 		break;
 
