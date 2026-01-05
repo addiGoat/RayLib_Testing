@@ -13,12 +13,13 @@ Game::Game():
 		ButtonStyle{ BLACK, ORANGE, GREEN }
 	),	// Initialize Draw Cards Button with position, size, and style
 	resetButton(
-		Vector2{ 100.0f, 100.0f},
-		Vector2{ 100.0f, 100.0f},
+		resetButtonPos,
+		resetButtonSize,
 		ButtonStyle{ BLACK, ORANGE, GREEN } 
 	)
 {
 	wantsRestart = false;
+	wantsQuit = false;
 	currentPhase = GamePhase::FULL_ROOM;
 	currentState = GameState::PLAYING;
 	deckSize = mainDeck.remaining();
@@ -79,8 +80,11 @@ void Game::InteractWithCard(size_t index) {
 	}
 
 
-	if (player.HP() <= 0) {
+	if (player.IsDead()) {
 		currentState = GameState::GAME_OVER;
+	}
+	else if (deckSize == 0 && filledSlots == 0) {
+		currentState = GameState::VICTORY;
 	}
 	else {
 		
@@ -88,7 +92,6 @@ void Game::InteractWithCard(size_t index) {
 		if (filledSlots == 1) FillRowToMax(); // Refill row if all slots are empty
 
 	}
-	
 }
 
 void Game::Update() {
@@ -120,6 +123,7 @@ void Game::Update() {
 
 	hoveredCardIndex = -1;
 
+	if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) wantsQuit = true;
 
 }	
 
@@ -192,7 +196,11 @@ void Game::Draw() {
 	case GameState::GAME_OVER: 
 		DrawText("YOU DIED", 400, 100, 100, BLACK);
 		resetButton.DrawButton("Reset", 50);
-
+		break;
+	case GameState::VICTORY:
+		DrawText("YOU WON", 400, 100, 100, BLACK);
+		resetButton.DrawButton("Reset", 50);
+		break;
 	}
 
 }	
@@ -211,4 +219,8 @@ void Game::RunFromRoom() {
 
 bool Game::WantsRestart() const {
 	return wantsRestart;
+}
+
+bool Game::WantsQuit() const {
+	return wantsQuit;
 }

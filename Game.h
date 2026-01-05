@@ -11,6 +11,9 @@ const Vector2 cardSize = { 100.0f, 150.0f };
 const Vector2 cardStartPos = { 430.0f, 100.0f };
 const float cardSpacing = 120.0f; // Spacing between drawn cards
 
+const Vector2 resetButtonSize = { 400.0f, 100.0f };
+const Vector2 resetButtonPos = { 450.0f, 300.0f };
+
 enum class GamePhase {
 	RAN_LAST_ROOM,
 	CLEARING_ROOM,
@@ -33,6 +36,7 @@ public:
 	void Draw();
 
 	bool WantsRestart() const;
+	bool WantsQuit() const;
 	
 
 private:
@@ -42,7 +46,8 @@ private:
 	Button runButton;
 	Button resetButton;
 
-	bool wantsRestart = false;
+	bool wantsQuit;
+	bool wantsRestart;
 	
 
 	void FillRowToMax();

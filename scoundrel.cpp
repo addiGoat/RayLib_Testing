@@ -28,7 +28,10 @@ int main() {
 	std::optional<Game> game;
 	game.emplace();
 
+	bool exitWindow = false;
+	bool exitWindowRequested = false;
 
+	SetExitKey(KEY_NULL);
 
 
 	// Window Initialization
@@ -38,11 +41,13 @@ int main() {
 
 
 	// Main game loop
-	while (!WindowShouldClose()) {
+	while (!exitWindow) {
 
 	// ====================================
 	// *              UPDATE			  *
 	// ====================================
+
+		exitWindow = game->WantsQuit();
 
 		game->Update();
 
@@ -51,6 +56,7 @@ int main() {
 
 			game.emplace();
 		}
+
 
 	// ====================================
 	// *               DRAW				  *
