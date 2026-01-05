@@ -136,6 +136,7 @@
     <ClCompile Include="Deck.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="initialTest.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="scoundrel.cpp" />
     <ClCompile Include="SnakeTest.cpp" />
   </ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="Card.h" />
     <ClInclude Include="Deck.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="menu.h" />
     <ClInclude Include="player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

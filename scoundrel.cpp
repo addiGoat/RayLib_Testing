@@ -4,6 +4,7 @@
 #include "Deck.h"
 #include "Button.h"
 #include "Game.h"
+#include "menu.h"
 
 
 
@@ -22,6 +23,9 @@ int main() {
 	// Set window dimensions
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
+
+	Menu mainMenu;
+	ProgramState currentState = ProgramState::MAIN_MENU;
 
 
 	// Initialize main game object
@@ -43,34 +47,71 @@ int main() {
 	// Main game loop
 	while (!exitWindow) {
 
-	// ====================================
-	// *              UPDATE			  *
-	// ====================================
+		// ====================================
+		// *              UPDATE			  *
+		// ====================================
 
-		exitWindow = game->WantsQuit();
 
-		game->Update();
 
-		// Sets new game object if restart is requested
-		if (game->WantsRestart()) {
 
-			game.emplace();
+		switch (currentState) {
+		case ProgramState::MAIN_MENU:
+			mainMenu.UpdateMenu();
+			currentState = mainMenu.currentState;
+
+			//if (mainMenu.WantsQuit()) exitWindow = true;
+			break;
+
+		case ProgramState::IN_GAME:
+			game->Update();
+
+			// Sets new game object if restart is requested
+			if (game->WantsRestart()) {
+
+				game.emplace();
+			}
+
+			//exitWindow = game->WantsQuit();
+			break;
 		}
 
+		if (game->WantsQuit() || mainMenu.WantsQuit()) exitWindow = true;
 
-	// ====================================
-	// *               DRAW				  *
-	// ====================================
+
+
+
+
+
+		// ====================================
+		// *               DRAW				  *
+		// ====================================
+
+		Color crosshairLine; //debug, remove later
 
 		BeginDrawing();
-		ClearBackground(DARKGRAY);
-		game->Draw(); // Draws main game elements
+
+		switch (currentState) {
+		case ProgramState::MAIN_MENU:
+			ClearBackground(SKYBLUE);
+			mainMenu.DrawMenu();
+
+			crosshairLine = BLACK; // debug, remove later
+			break;
+		case ProgramState::IN_GAME:
+			ClearBackground(DARKGRAY);
+			game->Draw(); // Draws main game elements
+
+			crosshairLine = RAYWHITE; // debug, remove later
+			break;
+		}
+		
+		
 
 		// ==== MOUSE POS DEBUG ====
 		Vector2 mp = GetMousePosition();
 		int crossSize = 10; // Crosshair length
-		DrawLine(mp.x - crossSize, mp.y, mp.x + crossSize, mp.y, RAYWHITE); // Draws a crosshair at 
-		DrawLine(mp.x, mp.y - crossSize, mp.x, mp.y + crossSize, RAYWHITE); // current mouse position
+		DrawLine(mp.x - crossSize, mp.y, mp.x + crossSize, mp.y, crosshairLine); // Draws a crosshair at 
+		DrawLine(mp.x, mp.y - crossSize, mp.x, mp.y + crossSize, crosshairLine); // current mouse position
 		DrawText(TextFormat("(%.0f, %.0f)", mp.x, mp.y), mp.x + 12, mp.y - 12, 20, BLACK); // Displays mouse coordinates
 
 
