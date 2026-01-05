@@ -84,28 +84,31 @@ void Game::Draw() {
 
 	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
 
+	if (cardRow.size() > 0) {
+		for (size_t i = 0; i < cardRow.size(); i++) {
+			Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+			Color base = GetCardColor(cardRow[i].get_type());
+			Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
+			cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+		}
+	}
 	switch (currentPhase) {
 		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
 		drawButton.DrawButton("Draw");
-		if (cardRow.size() > 0) {
-			for (size_t i = 0; i < cardRow.size(); i++) {
-				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-				Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : cardColor;
-				cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
-			}
-		}
+		
 		break;
 		// Draws all cards when hand is full, reads "Discard" on button
 	case GamePhase::CARD_DRAWN:
 		drawButton.DrawButton("Discard");
-		if (cardRow.size() > 0) {
-			for (size_t i = 0; i < cardRow.size(); i++) {
-				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-				Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : cardColor;
-				cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
-			}
-		}
+		//if (cardRow.size() > 0) {
+		//	for (size_t i = 0; i < cardRow.size(); i++) {
+		//		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+		//		Color base = GetCardColor(cardRow[i].get_type());
+		//		Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
+		//		cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+		//	}
+		//}
 		
 		break;
 

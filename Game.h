@@ -2,6 +2,7 @@
 #include "Deck.h"
 #include "Card.h"
 #include "Button.h"
+#include "player.h"
 
 // Default card parameters
 const Vector2 cardSize = { 100.0f, 150.0f };
@@ -38,5 +39,14 @@ private:
 
 	std::vector<card> cardRow;
 	const size_t maxRowSize = 4;
+
+	static Color GetCardColor(Type t) {
+		switch (t) {
+		case MONSTER: return RED;
+		case POTION: return GREEN;
+		case WEAPON: return BLUE;
+		default: return GRAY;
+		}
+	}
 };
 

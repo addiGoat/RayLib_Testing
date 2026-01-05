@@ -21,7 +21,7 @@ card::card(int r, int s) {
 // Default constructor for no input
 card::card() {
 	cardRank = 0;
-	cardType;
+	cardType = MONSTER;
 }
 
 int card::get_rank() const {
@@ -60,7 +60,7 @@ void card::DrawCardImage(Vector2 pos, Vector2 size, Color color) {
 
 
 	int rankFontSize = 72;
-	if (cardRank == 13) { rankText = "A"; }
+	if (cardRank == 12) { rankText = "A"; }
 	else rankText = TextFormat("%i", cardRank + 2);
 	
 	int textW = MeasureText(rankText, rankFontSize);
