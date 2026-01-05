@@ -1,8 +1,10 @@
 #pragma once
+#include <optional>
 #include "Deck.h"
 #include "Card.h"
 #include "Button.h"
 #include "player.h"
+#include <array>
 
 // Default card parameters
 const Vector2 cardSize = { 100.0f, 150.0f };
@@ -26,6 +28,8 @@ private:
 	GamePhase currentPhase;
 	Button drawButton;
 
+	void FillRowToMax();
+
 	Color cardColor = CARD_COLOR_IDLE;
 
 	size_t deckSize;
@@ -38,7 +42,12 @@ private:
 
 
 	std::vector<card> cardRow;
-	const size_t maxRowSize = 4;
+	
+
+	static constexpr size_t maxRowSize = 4;
+	std::array<std::optional<card>, maxRowSize> cardSlots;
+	
+	
 
 	static Color GetCardColor(Type t) {
 		switch (t) {

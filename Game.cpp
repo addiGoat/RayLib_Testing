@@ -2,6 +2,10 @@
 #include "raylib.h" 
 #include <iostream>
 
+
+// ====================================
+// *            CONSTRUCTOR           *
+// ====================================
 Game::Game() 
 	: drawButton(
 		Vector2{ 600.0f, 500.0f },
@@ -11,6 +15,7 @@ Game::Game()
 {
 	currentPhase = GamePhase::WAITING_FOR_DRAW;
 	deckSize = mainDeck.remaining();
+	FillRowToMax();
 
 
 	// Assign functionality to draw button's onClick event
@@ -44,13 +49,17 @@ Game::Game()
 // *              UPDATE			  *
 // ====================================
 void Game::InteractWithCard(size_t index) {
-	if (index >= cardRow.size()) return; // Invalid index
+	if (index >= cardSlots.size()) return; // Invalid index
+	if (!cardSlots[index].has_value()) return; // No card in this slot
 
-	Type t = cardRow[index].get_type();
-	int rank = cardRow[index].get_rank();
+	cardSlots[index].reset(); // Remove the card from the slot
 
-	std::cout << "Interacted with card #" << index + 1 << " (type=" << cardRow[index].type_to_string(t) << ", rank=" << rank << ")\n";
+	size_t filledSlots = 0;
+	for (auto& s : cardSlots) {
+		if (s.has_value()) filledSlots++;
+	}
 
+	if (filledSlots == 1) FillRowToMax(); // Refill row if all slots are empty
 }
 
 void Game::Update() {
@@ -59,20 +68,30 @@ void Game::Update() {
 
 	hoveredCardIndex = -1;
 
-	for (size_t i = 0; i < cardRow.size(); i++) {
+	for (size_t i = 0; i < cardSlots.size(); i++) {
 		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
 		Rectangle cardRect = { cardPos.x, cardPos.y, cardSize.x, cardSize.y };
 
-		if (CheckCollisionPointRec(mousePos, cardRect)) {
+		if (CheckCollisionPointRec(mousePos, cardRect) && cardSlots[i].has_value()) {
 			hoveredCardIndex = (int)i;
 			if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
 				InteractWithCard(i);
+				hoveredCardIndex = -1; // Reset hovered index after interaction
 				break;
 			} 
 			break;
 		}
 	}
 }	
+
+void Game::FillRowToMax() {
+	for (size_t i = 0; i < maxRowSize && deckSize > 0; i++) {
+		if (!cardSlots[i].has_value()) {
+			cardSlots[i] = mainDeck.draw_card();
+			deckSize = mainDeck.remaining();
+		}
+	}
+}
 
 
 
@@ -84,14 +103,30 @@ void Game::Draw() {
 
 	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
 
-	if (cardRow.size() > 0) {
-		for (size_t i = 0; i < cardRow.size(); i++) {
-			Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-			Color base = GetCardColor(cardRow[i].get_type());
+	for (size_t i = 0; i < maxRowSize; i++) {
+		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+
+		if (cardSlots[i].has_value()) {
+			Color base = GetCardColor(cardSlots[i]->get_type());
 			Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
-			cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+			cardSlots[i]->DrawCardImage(cardPos, cardSize, currentColor);
+		}
+		else {
+			// Draw empty card slot
+			DrawRectangleV(cardPos, cardSize, GRAY);
 		}
 	}
+	
+	
+	
+	//if (cardRow.size() > 0) {
+	//	for (size_t i = 0; i < cardRow.size(); i++) {
+	//		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+	//		Color base = GetCardColor(cardRow[i].get_type());
+	//		Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
+	//		cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
+	//	}
+	//}
 	switch (currentPhase) {
 		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
