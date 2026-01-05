@@ -13,8 +13,8 @@ const float cardSpacing = 120.0f; // Spacing between drawn cards
 
 enum class GamePhase {
 	WAITING_FOR_DRAW,
-	CARD_DRAWN,
-	RESOLVING_CARD
+	WAITING_FOR_ACTION,
+	RESOLVING_ACTION
 };
 
 class Game {
@@ -36,13 +36,11 @@ private:
 
 	deck mainDeck;
 
+	Player player;
+
 	void InteractWithCard(size_t index);
 
 	int hoveredCardIndex = -1;
-
-
-	std::vector<card> cardRow;
-	
 
 	static constexpr size_t maxRowSize = 4;
 	std::array<std::optional<card>, maxRowSize> cardSlots;

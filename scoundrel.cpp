@@ -23,7 +23,7 @@ int main() {
 	const int screenHeight = 720;
 
 
-	// Initializes main game object
+	// Initialize main game object
 	Game game;
 
 

@@ -26,16 +26,16 @@ Game::Game()
 		// Setup draw card action
 		case GamePhase::WAITING_FOR_DRAW:
 			if (deckSize == 0) return; // Prevent drawing if deck is empty
-			if (cardRow.size() < maxRowSize) {
-				cardRow.push_back(mainDeck.draw_card());
-				deckSize = mainDeck.remaining();
-			}
-			if (cardRow.size() >= maxRowSize) currentPhase = GamePhase::CARD_DRAWN;
+			//if (cardSlots.size() < maxRowSize) {
+			//	cardSlots.push_back(mainDeck.draw_card());
+			//		deckSize = mainDeck.remaining();
+			//}
+			if (cardSlots.size() >= maxRowSize) currentPhase = GamePhase::WAITING_FOR_ACTION;
 			break;
 
 		// Setup discard action
-		case GamePhase::CARD_DRAWN:
-			cardRow.clear(); // Clear the drawn cards
+		case GamePhase::WAITING_FOR_ACTION:
+			
 			currentPhase = GamePhase::WAITING_FOR_DRAW; // Reset to waiting for draw phase
 			break;
 
@@ -49,8 +49,16 @@ Game::Game()
 // *              UPDATE			  *
 // ====================================
 void Game::InteractWithCard(size_t index) {
+	
 	if (index >= cardSlots.size()) return; // Invalid index
 	if (!cardSlots[index].has_value()) return; // No card in this slot
+	
+	switch (cardSlots[index]->get_type()) {
+	case MONSTER: player.Damage(cardSlots[index]->get_rank() + 1); break;
+	case WEAPON: /* Future weapon effect can be implemented here */ break;
+	case POTION: player.Heal(cardSlots[index]->get_rank() + 1); break;
+	}
+
 
 	cardSlots[index].reset(); // Remove the card from the slot
 
@@ -75,7 +83,7 @@ void Game::Update() {
 		if (CheckCollisionPointRec(mousePos, cardRect) && cardSlots[i].has_value()) {
 			hoveredCardIndex = (int)i;
 			if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
-				InteractWithCard(i);
+				InteractWithCard(hoveredCardIndex);
 				hoveredCardIndex = -1; // Reset hovered index after interaction
 				break;
 			} 
@@ -103,6 +111,9 @@ void Game::Draw() {
 
 	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
 
+	DrawText(TextFormat("Player HP: %i", player.HP()), 50, 50, 20, BLACK); // Placeholder for player HP display))
+	
+
 	for (size_t i = 0; i < maxRowSize; i++) {
 		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
 
@@ -117,16 +128,6 @@ void Game::Draw() {
 		}
 	}
 	
-	
-	
-	//if (cardRow.size() > 0) {
-	//	for (size_t i = 0; i < cardRow.size(); i++) {
-	//		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-	//		Color base = GetCardColor(cardRow[i].get_type());
-	//		Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
-	//		cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
-	//	}
-	//}
 	switch (currentPhase) {
 		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
@@ -134,16 +135,9 @@ void Game::Draw() {
 		
 		break;
 		// Draws all cards when hand is full, reads "Discard" on button
-	case GamePhase::CARD_DRAWN:
+	case GamePhase::WAITING_FOR_ACTION:
 		drawButton.DrawButton("Discard");
-		//if (cardRow.size() > 0) {
-		//	for (size_t i = 0; i < cardRow.size(); i++) {
-		//		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-		//		Color base = GetCardColor(cardRow[i].get_type());
-		//		Color currentColor = (hoveredCardIndex == (int)i) ? YELLOW : base;
-		//		cardRow[i].DrawCardImage(cardPos, cardSize, currentColor);
-		//	}
-		//}
+
 		
 		break;
 
