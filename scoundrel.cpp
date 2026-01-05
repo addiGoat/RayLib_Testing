@@ -4,61 +4,32 @@
 #include "Button.h"
 #include "Game.h"
 
-#define DRAW_BUTTON_WIDTH 100
-#define DRAW_BUTTON_HEIGHT 100
-#define DRAW_BUTTON_X 600
-#define DRAW_BUTTON_Y 500
-
-// ===== Redundant, moved to Game.h =====
-//enum class GamePhase { 
-//	WAITING_FOR_DRAW,
-//	CARD_DRAWN,
-//	RESOLVING_CARD
-//};
 
 
 int main() {
+
+	// ====================================
+	// *      SET DEFAULT PARAMETERS      *
+	// ====================================
+
+	// Main draw button parameters
+	Vector2 buttonSize = { 100.0f, 100.0f };
+	Vector2 buttonPos = { 600.0f, 500.0f };
+	ButtonStyle drawButtonStyle = { BLACK, ORANGE, GREEN };
+
+	
+	// Set window dimensions
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
 
-	Game game; // Initializes main game object
 
-	// Main draw button parameters
-	Vector2 buttonSize = { DRAW_BUTTON_WIDTH, DRAW_BUTTON_HEIGHT };
-	Vector2 buttonPos = { DRAW_BUTTON_X, DRAW_BUTTON_Y };
-	ButtonStyle drawButtonStyle = { BLACK, ORANGE, GREEN };
-
-	// Default card parameters
-	Vector2 cardSize = { 100.0f, 150.0f };
-	Vector2 cardStartPos = { 430.0f, 100.0f };
-	float cardSpacing = 120.0f; // Spacing between drawn cards
-
-	
-	//deck deck; //main deck of cards remaining
-	//std::string deckSize = deck.remaining();
+	// Initializes main game object
+	Game game;
 
 
 
-	card drawnCard(0, 0); //placeholder for drawn card
-	
-	std::vector<card> cardRow; //currently active hands in "room"
-	
-	// GamePhase currentPhase = GamePhase::WAITING_FOR_DRAW; //sets the current phase of the game
-	
 
-	// Creates main draw button and assigns functionality to onClick event
-	//Button myButton(buttonPos, buttonSize, drawButtonStyle);
-	//myButton.onClick = [&]() {
-	//	if (currentPhase != GamePhase::WAITING_FOR_DRAW) return; // cancels event when button not active (wrong phase)
-	//	if (cardRow.size() < 4) cardRow.push_back(deck.draw_card()); //draws card if less than 4 cards in row
-	//	if (cardRow.size() >= 4) currentPhase = GamePhase::CARD_DRAWN; //moves to next phase when 4 cards drawn
-	//	deckSize = deck.remaining();
-	//	};
-
-	Vector2 mousePoint = { 0.0f, 0.0f };
-
-	
-
+	// Window Initialization
 	InitWindow(screenWidth, screenHeight, "Scoundrel");
 	SetTargetFPS(240);
 	HideCursor();
@@ -67,52 +38,20 @@ int main() {
 	// Main game loop
 	while (!WindowShouldClose()) {
 
+	// ====================================
+	// *              UPDATE			  *
+	// ====================================
+
 		game.Update();
 
+	// ====================================
+	// *               DRAW				  *
+	// ====================================
+
 		BeginDrawing();
 		ClearBackground(DARKGRAY);
-		game.Draw();
+		game.Draw(); // Draws main game elements
 
-
-
-
-
-
-/*
-		// ====================================
-		// =              UPDATE			  =
-		// ====================================
-
-		mousePoint = GetMousePosition();
-
-		myButton.UpdateButtonState(mousePoint); // Checks if button is being hovered or clicked
-
-
-
-		// ====================================
-		// =               DRAW				  =
-		// ====================================
-		BeginDrawing();
-		ClearBackground(DARKGRAY);
-
-		DrawText(TextFormat("Currently %s cards left in deck.", deckSize.c_str()), 500, 450, 20, BLACK); 
-
-		// Draws a card for each card in the row
-		// then positions them with spacing equal 
-		// to the current index * a spacing value
-		if (currentPhase == GamePhase::CARD_DRAWN){
-			for (size_t i = 0; i < cardRow.size(); i++) {
-				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
-				cardRow[i].DrawCardImage(cardPos, cardSize);
-			}
-			
-		}
-		
-		
-		if (currentPhase == GamePhase::WAITING_FOR_DRAW) myButton.DrawButton("Draw"); // Shows "draw" button when gamestate = waiting for draw
-
-
-		*/
 		// ==== MOUSE POS DEBUG ====
 		Vector2 mp = GetMousePosition();
 		int crossSize = 10; // Crosshair length
@@ -127,3 +66,55 @@ int main() {
 	CloseWindow();
 	return 0;
 }
+
+
+
+/* ===== Old Init, Draw, And Update Code =====
+
+
+	//deck deck; //main deck of cards remaining
+	//std::string deckSize = deck.remaining();
+
+	// Creates main draw button and assigns functionality to onClick event
+	//Button myButton(buttonPos, buttonSize, drawButtonStyle);
+	//myButton.onClick = [&]() {
+	//	if (currentPhase != GamePhase::WAITING_FOR_DRAW) return; // cancels event when button not active (wrong phase)
+	//	if (cardRow.size() < 4) cardRow.push_back(deck.draw_card()); //draws card if less than 4 cards in row
+	//	if (cardRow.size() >= 4) currentPhase = GamePhase::CARD_DRAWN; //moves to next phase when 4 cards drawn
+	//	deckSize = deck.remaining();
+	//	};
+ 
+	card drawnCard(0, 0); //placeholder for drawn card
+	
+	std::vector<card> cardRow; //currently active hands in "room"
+
+
+
+
+		mousePoint = GetMousePosition();
+
+		myButton.UpdateButtonState(mousePoint); // Checks if button is being hovered or clicked
+
+
+
+		BeginDrawing();
+		ClearBackground(DARKGRAY);
+
+		DrawText(TextFormat("Currently %s cards left in deck.", deckSize.c_str()), 500, 450, 20, BLACK);
+
+		// Draws a card for each card in the row
+		// then positions them with spacing equal
+		// to the current index * a spacing value
+		if (currentPhase == GamePhase::CARD_DRAWN){
+			for (size_t i = 0; i < cardRow.size(); i++) {
+				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+				cardRow[i].DrawCardImage(cardPos, cardSize);
+			}
+
+		}
+
+
+		if (currentPhase == GamePhase::WAITING_FOR_DRAW) myButton.DrawButton("Draw"); // Shows "draw" button when gamestate = waiting for draw
+
+
+		*/

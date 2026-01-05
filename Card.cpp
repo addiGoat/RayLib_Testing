@@ -2,8 +2,8 @@
 #include <iostream>
 
 // Converts card type enum to string representation
-std::string card::type_to_string(Type s) { 
-	switch (s) {
+const char* card::type_to_string(Type t) { 
+	switch (t) {
 	case MONSTER: return "Monster";
 	case WEAPON: return "Weapon";
 	case POTION: return "Potion";
@@ -34,9 +34,42 @@ Type card::get_type() const {
 }
 
 void card::DrawCardImage(Vector2 pos, Vector2 size, Color color) {
-	DrawRectangleV(pos, size, color); // Draw card background
-	DrawText(type_to_string(cardType).c_str(), pos.x + 10, pos.y + 10, 20, BLACK); // Draw card type
-	DrawText(TextFormat("Level %i", cardRank + 1), pos.x + 10, pos.y + 40, 20, BLACK); // Draw card rank
+	
+	// Draw card background
+	DrawRectangleV(pos, size, color);
+
+	// ========== Type text at top ==========
+	int typeFontSize = 22;
+	
+	const char* typeText = type_to_string(cardType);
+
+	int typeTextW = MeasureText(typeText, typeFontSize);
+
+	float cardCenterX = pos.x + size.x * 0.5f;
+	float cardBottomY = pos.y + size.y;
+
+	float typeTextX = cardCenterX - typeTextW * 0.5f;
+	float typeTextY = cardBottomY - typeFontSize - 10.0f;
+	
+	DrawText(typeText, (int)typeTextX, (int)typeTextY, typeFontSize, BLACK); // Draw card type
+	
+	
+
+	// ========== Rank text at center ==========
+
+	int rankFontSize = 72;
+	const char* rankText = TextFormat("%i", cardRank + 1);
+	
+	int textW = MeasureText(rankText, rankFontSize);
+
+	float centerX = pos.x + size.x * 0.5f;
+	float centerY = pos.y + size.y * 0.5f;
+
+	float textX = centerX - textW * 0.5f;
+	float textY = centerY - rankFontSize * 0.5f;
+
+
+	DrawText(rankText, (int)textX, (int)textY, rankFontSize, BLACK); // Draw card rank
 
 }
 

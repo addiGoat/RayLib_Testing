@@ -1,5 +1,6 @@
 #include "Game.h"
-#include "raylib.h"
+#include "raylib.h" 
+#include <iostream>
 
 Game::Game() 
 	: drawButton(
@@ -9,41 +10,98 @@ Game::Game()
 	)	// Initialize Draw Cards Button with position, size, and style
 {
 	currentPhase = GamePhase::WAITING_FOR_DRAW;
-	hasDrawnCard = false;
 	deckSize = mainDeck.remaining();
 
 
 	// Assign functionality to draw button's onClick event
 	drawButton.onClick = [&]() {
-		if (currentPhase != GamePhase::WAITING_FOR_DRAW) return; // cancels event when button not active (wrong phase)
-		// Implement card drawing logic here
-		// e.g., if (cardRow.size() < 4) cardRow.push_back(deck.draw_card());
-		// if (cardRow.size() >= 4) currentPhase = GamePhase::CARD_DRAWN;
 
-		drawnCard = mainDeck.draw_card(); // Draw a card from the main deck
-		hasDrawnCard = true;
-		deckSize = mainDeck.remaining();
-		currentPhase = GamePhase::CARD_DRAWN; // Placeholder action to change game phase
-		};
+		switch (currentPhase) {
+
+		// Setup draw card action
+		case GamePhase::WAITING_FOR_DRAW:
+			if (deckSize == 0) return; // Prevent drawing if deck is empty
+			if (cardRow.size() < maxRowSize) {
+				cardRow.push_back(mainDeck.draw_card());
+				deckSize = mainDeck.remaining();
+			}
+			if (cardRow.size() >= maxRowSize) currentPhase = GamePhase::CARD_DRAWN;
+			break;
+
+		// Setup discard action
+		case GamePhase::CARD_DRAWN:
+			cardRow.clear(); // Clear the drawn cards
+			currentPhase = GamePhase::WAITING_FOR_DRAW; // Reset to waiting for draw phase
+			break;
+
+		default: return; // Default case to handle unexpected phases
+		}
+	};
+
+}
+
+// ====================================
+// *              UPDATE			  *
+// ====================================
+void Game::InteractWithCard(size_t index) {
+	if (index >= cardRow.size()) return; // Invalid index
+
+	Type t = cardRow[index].get_type();
+	int rank = cardRow[index].get_rank();
+
+	std::cout << "Interacted with card #" << index + 1 << " (type=" << cardRow[index].type_to_string(t) << ", rank=" << rank << ")\n";
+
 }
 
 void Game::Update() {
 	Vector2 mousePos = GetMousePosition();
 	drawButton.UpdateButtonState(mousePos);
+
+	for (size_t i = 0; i < cardRow.size(); i++) {
+		Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+		Rectangle CardRect = { cardPos.x, cardPos.y, cardSize.x, cardSize.y };
+
+		if (CheckCollisionPointRec(mousePos, CardRect) && IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+			InteractWithCard(i);
+			break;
+		} 
+	}
+
 }	
+
+
+
+// ====================================
+// *               DRAW               *
+// ====================================
 
 void Game::Draw() {
 
 	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
 
-	if (currentPhase == GamePhase::WAITING_FOR_DRAW) {
-		drawButton.DrawButton("Draw Card");
-	}
+	switch (currentPhase) {
+		// Draws one card for ever card in row, reads "Draw" on button
+	case GamePhase::WAITING_FOR_DRAW:
+		drawButton.DrawButton("Draw");
+		if (cardRow.size() > 0) {
+			for (size_t i = 0; i < cardRow.size(); i++) {
+				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+				cardRow[i].DrawCardImage(cardPos, cardSize, cardColor);
+			}
+		}
+		break;
+		// Draws all cards when hand is full, reads "Discard" on button
+	case GamePhase::CARD_DRAWN:
+		drawButton.DrawButton("Discard");
+		if (cardRow.size() > 0) {
+			for (size_t i = 0; i < cardRow.size(); i++) {
+				Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };
+				cardRow[i].DrawCardImage(cardPos, cardSize, cardColor);
+			}
+		}
+		
+		break;
 
-	if (currentPhase == GamePhase::CARD_DRAWN && hasDrawnCard) {
-		// Draw the drawn card at a specified positionNope
-		Vector2 cardPos = { 590.0f, 200.0f }; // Centered position for drawn card
-		Vector2 cardSize = { 100.0f, 150.0f };
-		drawnCard.DrawCardImage(cardPos, cardSize, drawButtonColor);
+	default: return; // Default case to handle unexpected phases
 	}
 }	
