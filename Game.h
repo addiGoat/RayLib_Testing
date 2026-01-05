@@ -4,7 +4,7 @@
 #include "Card.h"
 #include "Button.h"
 #include "player.h"
-#include <array>
+
 
 // Default card parameters
 const Vector2 cardSize = { 100.0f, 150.0f };
@@ -12,10 +12,12 @@ const Vector2 cardStartPos = { 430.0f, 100.0f };
 const float cardSpacing = 120.0f; // Spacing between drawn cards
 
 enum class GamePhase {
-	WAITING_FOR_DRAW,
-	WAITING_FOR_ACTION,
-	RESOLVING_ACTION
+	RAN_LAST_ROOM,
+	CLEARING_ROOM,
+	RESOLVING_ACTION,
+	FULL_ROOM
 };
+
 
 class Game {
 public:
@@ -26,7 +28,7 @@ public:
 
 private:
 	GamePhase currentPhase;
-	Button drawButton;
+	Button runButton;
 
 	void FillRowToMax();
 
@@ -44,6 +46,8 @@ private:
 
 	static constexpr size_t maxRowSize = 4;
 	std::array<std::optional<card>, maxRowSize> cardSlots;
+
+	void RunFromRoom();
 	
 	
 

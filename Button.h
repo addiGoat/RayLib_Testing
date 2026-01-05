@@ -20,7 +20,7 @@ public:
 	Button(Vector2 pos, Vector2 size, ButtonStyle s);
 
 	void UpdateButtonState(Vector2 mousePos);
-	void DrawButton(const char* buttonText);
+	void DrawButton(const char* buttonText, int size);
 
 };
 

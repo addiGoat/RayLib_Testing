@@ -2,6 +2,8 @@
 #include <vector>
 #include <random>
 #include <algorithm>
+#include <array>
+#include <optional>
 #include "Card.h"
 
 class deck
@@ -22,4 +24,8 @@ public:
 	card draw_card();
 	size_t remaining() const;
 	size_t discards() const;
+
+	void PutOnBottom(card c);
+
+	//void RunFromRoom(std::array<> cardSlots);
 };

@@ -57,3 +57,7 @@ size_t deck::remaining() const {
 size_t deck::discards() const {
 	return discard_deck.size();
 }
+
+void deck::PutOnBottom(card c) {
+	main_deck.insert(main_deck.begin(), c);
+}

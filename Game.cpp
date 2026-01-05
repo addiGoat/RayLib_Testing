@@ -6,43 +6,37 @@
 // ====================================
 // *            CONSTRUCTOR           *
 // ====================================
-Game::Game() 
-	: drawButton(
-		Vector2{ 600.0f, 500.0f },
-		Vector2{ 100.0f, 100.0f },
+Game::Game()
+	: runButton(
+		Vector2{ 930.0f, 140.0f },
+		Vector2{ 200.0f, 100.0f },
 		ButtonStyle{ BLACK, ORANGE, GREEN }
 	)	// Initialize Draw Cards Button with position, size, and style
 {
-	currentPhase = GamePhase::WAITING_FOR_DRAW;
+	currentPhase = GamePhase::FULL_ROOM;
 	deckSize = mainDeck.remaining();
 	FillRowToMax();
 
 
 	// Assign functionality to draw button's onClick event
-	drawButton.onClick = [&]() {
+	runButton.onClick = [&]() {
 
 		switch (currentPhase) {
-
-		// Setup draw card action
-		case GamePhase::WAITING_FOR_DRAW:
-			if (deckSize == 0) return; // Prevent drawing if deck is empty
-			//if (cardSlots.size() < maxRowSize) {
-			//	cardSlots.push_back(mainDeck.draw_card());
-			//		deckSize = mainDeck.remaining();
-			//}
-			if (cardSlots.size() >= maxRowSize) currentPhase = GamePhase::WAITING_FOR_ACTION;
+		case GamePhase::FULL_ROOM:
+			RunFromRoom();
+			currentPhase = GamePhase::RAN_LAST_ROOM; 
 			break;
 
-		// Setup discard action
-		case GamePhase::WAITING_FOR_ACTION:
-			
-			currentPhase = GamePhase::WAITING_FOR_DRAW; // Reset to waiting for draw phase
+		case GamePhase::RAN_LAST_ROOM:
+			 
+			break;
+		case GamePhase::CLEARING_ROOM:  
 			break;
 
-		default: return; // Default case to handle unexpected phases
-		}
+
+		};
+
 	};
-
 }
 
 // ====================================
@@ -69,12 +63,17 @@ void Game::InteractWithCard(size_t index) {
 		if (s.has_value()) filledSlots++;
 	}
 
+	currentPhase = GamePhase::CLEARING_ROOM;
+
 	if (filledSlots == 1) FillRowToMax(); // Refill row if all slots are empty
+
+
+	
 }
 
 void Game::Update() {
 	Vector2 mousePos = GetMousePosition();
-	drawButton.UpdateButtonState(mousePos);
+	runButton.UpdateButtonState(mousePos);
 
 	hoveredCardIndex = -1;
 
@@ -101,6 +100,8 @@ void Game::FillRowToMax() {
 			deckSize = mainDeck.remaining();
 		}
 	}
+
+	if (currentPhase == GamePhase::RAN_LAST_ROOM || currentPhase == GamePhase::CLEARING_ROOM) currentPhase = GamePhase::FULL_ROOM;
 }
 
 
@@ -111,7 +112,7 @@ void Game::FillRowToMax() {
 
 void Game::Draw() {
 
-	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 50, 150, 20, BLACK);
+	DrawText(TextFormat("Currently %i cards left in dungeon.", (int)deckSize), 50, 150, 20, BLACK);
 
 	DrawText(TextFormat("Player HP: %i", player.HP()), 50, 50, 50, BLACK); // Placeholder for player HP display))
 	
@@ -137,17 +138,36 @@ void Game::Draw() {
 
 	
 	switch (currentPhase) {
-		// Draws one card for ever card in row, reads "Draw" on button
-	case GamePhase::WAITING_FOR_DRAW:
-		drawButton.DrawButton("Draw");
-		
+		// Allows running if action valid
+	case GamePhase::FULL_ROOM:
+		runButton.DrawButton("Run", 50);
 		break;
-		// Draws all cards when hand is full, reads "Discard" on button
-	case GamePhase::WAITING_FOR_ACTION:
-		drawButton.DrawButton("Discard");
-		
+
+		// Displays message if unable to run
+	case GamePhase::RAN_LAST_ROOM:
+		runButton.DrawButton("Can't Run", 35);
+		DrawText("Can't run twice\nin a row", 930, 75, 30, BLACK);
+		break;
+
+
+
+	case GamePhase::CLEARING_ROOM:
+		runButton.DrawButton("Can't Run", 35);
+		DrawText("Can only run\nwith full hand", 930, 75, 30, BLACK);
 		break;
 
 	default: return; // Default case to handle unexpected phases
 	}
 }	
+
+void Game::RunFromRoom() {
+	for (size_t i = 0; i < maxRowSize; i++) {
+		if (cardSlots[i].has_value()) {
+			mainDeck.PutOnBottom(*cardSlots[i]);
+			cardSlots[i].reset();
+		}
+	}
+
+	deckSize = mainDeck.remaining();
+	FillRowToMax();
+}
