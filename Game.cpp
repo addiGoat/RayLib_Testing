@@ -54,8 +54,13 @@ void Game::InteractWithCard(size_t index) {
 	if (!cardSlots[index].has_value()) return; // No card in this slot
 	
 	switch (cardSlots[index]->get_type()) {
-	case MONSTER: player.Damage(cardSlots[index]->get_rank() + 1); break;
-	case WEAPON: /* Future weapon effect can be implemented here */ break;
+	case MONSTER: 
+		if (player.weaponDamage > cardSlots[index]->get_rank()) {
+			player.AttackFull(cardSlots[index]->get_rank() + 1);
+		} // CURRENTLY WORKING ON, PICK UP HERE DUMBO =============================
+		else
+		player.Damage(cardSlots[index]->get_rank() + 1); break;
+	case WEAPON: player.Equip(cardSlots[index]->get_rank());  break;
 	case POTION: player.Heal(cardSlots[index]->get_rank() + 1); break;
 	}
 
@@ -109,9 +114,9 @@ void Game::FillRowToMax() {
 
 void Game::Draw() {
 
-	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 500, 450, 20, BLACK);
+	DrawText(TextFormat("Currently %i cards left in deck.", (int)deckSize), 50, 150, 20, BLACK);
 
-	DrawText(TextFormat("Player HP: %i", player.HP()), 50, 50, 20, BLACK); // Placeholder for player HP display))
+	DrawText(TextFormat("Player HP: %i", player.HP()), 50, 50, 50, BLACK); // Placeholder for player HP display))
 	
 
 	for (size_t i = 0; i < maxRowSize; i++) {
@@ -127,17 +132,22 @@ void Game::Draw() {
 			DrawRectangleV(cardPos, cardSize, GRAY);
 		}
 	}
+
+	// Draw equipped weapon if player has one
+	if (player.weaponDamage > 0) {
+		player.DrawEquippedWeapon();
+	}
+
 	
 	switch (currentPhase) {
 		// Draws one card for ever card in row, reads "Draw" on button
 	case GamePhase::WAITING_FOR_DRAW:
-		drawButton.DrawButton("Draw");
+		//drawButton.DrawButton("Draw");
 		
 		break;
 		// Draws all cards when hand is full, reads "Discard" on button
 	case GamePhase::WAITING_FOR_ACTION:
-		drawButton.DrawButton("Discard");
-
+		//drawButton.DrawButton("Discard");
 		
 		break;
 
