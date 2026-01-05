@@ -16,6 +16,11 @@ Game::Game():
 		resetButtonPos,
 		resetButtonSize,
 		ButtonStyle{ BLACK, ORANGE, GREEN } 
+	),
+	menuButton(
+		Vector2{ 1150.0f, 20.0f },
+		Vector2{ 100.0f, 100.0f },
+		ButtonStyle{ BLACK, ORANGE, GREEN }
 	)
 {
 	wantsRestart = false;
@@ -51,6 +56,10 @@ Game::Game():
 			wantsRestart = true;
 		}
 	};
+
+	menuButton.onClick = [&]() {
+		wantsQuit = true;
+		};
 
 
 }
@@ -100,6 +109,7 @@ void Game::Update() {
 	switch (currentState) {
 	case GameState::PLAYING:
 		runButton.UpdateButtonState(mousePos);
+		menuButton.UpdateButtonState(mousePos);
 
 		// Handles card interaction bounds
 		for (size_t i = 0; i < cardSlots.size(); i++) {
@@ -123,7 +133,7 @@ void Game::Update() {
 
 	hoveredCardIndex = -1;
 
-	if (WindowShouldClose() || IsKeyPressed(KEY_ESCAPE)) wantsQuit = true;
+	if (IsKeyPressed(KEY_ESCAPE)) wantsQuit = true;
 
 }	
 
@@ -151,6 +161,8 @@ void Game::Draw() {
 
 		DrawText(TextFormat("Currently %i cards left in dungeon.", (int)deckSize), 50, 150, 20, BLACK);
 		DrawText(TextFormat("Player HP: %i", player.HP()), 50, 50, 50, BLACK); // Placeholder for player HP display))
+
+		menuButton.DrawButton("Back", 12);
 
 		for (size_t i = 0; i < maxRowSize; i++) {
 			Vector2 cardPos = { cardStartPos.x + i * cardSpacing, cardStartPos.y };

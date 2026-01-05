@@ -5,7 +5,8 @@
 enum class ProgramState {
 	MAIN_MENU,
 	RULES_MENU,
-	IN_GAME
+	IN_GAME,
+	RESETTING
 };
 
 class Menu {
@@ -13,8 +14,8 @@ public:
 	Menu();
 	bool playRequested = false;
 
-	Vector2 playButtonPos = { 200.0f, 200.0f };
-	Vector2 playButtonSize = { 200.0f, 200.0f };
+	Vector2 playButtonPos = { 350.0f, 200.0f };
+	Vector2 playButtonSize = { 600.0f, 100.0f };
 	float buttonSpacing = 20.0f;
 
 	Button playButton;
@@ -31,6 +32,7 @@ public:
 
 	void UpdateMenu();
 	void DrawMenu();
+	void MenuReset();
 
 	bool WantsQuit() const;
 

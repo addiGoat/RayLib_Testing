@@ -51,6 +51,7 @@ int main() {
 		// *              UPDATE			  *
 		// ====================================
 
+		
 
 
 
@@ -58,8 +59,6 @@ int main() {
 		case ProgramState::MAIN_MENU:
 			mainMenu.UpdateMenu();
 			currentState = mainMenu.currentState;
-
-			//if (mainMenu.WantsQuit()) exitWindow = true;
 			break;
 
 		case ProgramState::IN_GAME:
@@ -71,22 +70,30 @@ int main() {
 				game.emplace();
 			}
 
-			//exitWindow = game->WantsQuit();
+			if (game->WantsQuit()) {
+				mainMenu.MenuReset();
+				currentState = ProgramState::RESETTING;
+			}
+			break;
+		case ProgramState::RESETTING:
+			game.reset();
+			game.emplace();
+			currentState = ProgramState::MAIN_MENU;
 			break;
 		}
 
-		if (game->WantsQuit() || mainMenu.WantsQuit()) exitWindow = true;
+		if (mainMenu.WantsQuit()) exitWindow = true;
 
 
 
 
 
-
+		if (WindowShouldClose()) exitWindow = true;
 		// ====================================
 		// *               DRAW				  *
 		// ====================================
 
-		Color crosshairLine; //debug, remove later
+		Color crosshairLine = BLACK; //debug, remove later
 
 		BeginDrawing();
 
@@ -102,6 +109,10 @@ int main() {
 			game->Draw(); // Draws main game elements
 
 			crosshairLine = RAYWHITE; // debug, remove later
+			break;
+		case ProgramState::RESETTING:
+			ClearBackground(BLACK);
+			crosshairLine = BLACK;
 			break;
 		}
 		

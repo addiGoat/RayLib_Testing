@@ -45,6 +45,7 @@ private:
 
 	Button runButton;
 	Button resetButton;
+	Button menuButton;
 
 	bool wantsQuit;
 	bool wantsRestart;
