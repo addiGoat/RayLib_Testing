@@ -1,0 +1,25 @@
+# HOW TO PLAY: SCOUNDREL
+
+The rules of scoundrel are simple. You start with 20 HP. Your HP can never go over 20, 
+and if it reaches 0 you die. Each "room" consist of four cards. Each card can be 
+interacted with for a different effect (described below) When only one card is left, 
+a new room will be drawn up to four total cards again. The goal is to get through the 
+entire deck (or "dungeon") without dying.
+
+# Card types:
+
+## Potions
+There are 9 potion cards in the dungeon, from rank 2-10. 
+They will heal you for HP equal to their rank.
+
+## Weapons
+Like potions, there are 9 weapon cards ranked 2-10 in the dungeon. 
+These can be equipped to defend against monsters
+
+## Monster cards
+There are 26 monster cards in the deck, with two copies of each rank from 2-14. 
+The effect of a monster card differs depending on your equipped weapon.
+
+If you have no weapon equipped, you take full damage from the monster.
+If you've just equipped a weapon, you'll negate damage from the monster to a max of your weapon rank (ie. attacking a level 8 monster with a level 6 weapon will deal 2 damage), and your weapon will become the rank of the slain monster.
+If you've ALREADY ATTACKED A MONSTER with your current weapon, you can ONLY attack monsters of a lower rank than the last slain monster (ie. if you pick up a rank 10 weapon, and then slay a rank 5 monster, you can now ONLY attack monsters of rank 4 or lower. Any other attacks will deal the monster's full damage to you).

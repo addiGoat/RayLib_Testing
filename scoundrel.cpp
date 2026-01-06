@@ -5,7 +5,20 @@
 #include "Button.h"
 #include "Game.h"
 #include "menu.h"
+#include "txtloader.h"
 
+
+void DrawMouse(Vector2 mp) {
+
+	DrawTriangle(
+		mp,
+		{ mp.x, mp.y + 50 },
+		{ mp.x + 50, mp.y + 50 },
+
+		WHITE
+	);
+	DrawRectangle(90, 90, 20, 20, RED);
+}
 
 
 int main() {
@@ -13,6 +26,8 @@ int main() {
 	// ====================================
 	// *      SET DEFAULT PARAMETERS      *
 	// ====================================
+
+
 
 	// Main draw button parameters
 	Vector2 buttonSize = { 100.0f, 100.0f };
@@ -24,13 +39,12 @@ int main() {
 	const int screenWidth = 1280;
 	const int screenHeight = 720;
 
-	Menu mainMenu;
+
 	ProgramState currentState = ProgramState::MAIN_MENU;
 
 
 	// Initialize main game object
-	std::optional<Game> game;
-	game.emplace();
+	
 
 	bool exitWindow = false;
 	bool exitWindowRequested = false;
@@ -42,6 +56,10 @@ int main() {
 	InitWindow(screenWidth, screenHeight, "Scoundrel");
 	SetTargetFPS(240);
 	HideCursor();
+
+	Menu mainMenu;
+
+	std::optional<Game> game;
 
 
 	// Main game loop
@@ -56,12 +74,15 @@ int main() {
 
 
 		switch (currentState) {
+		// Handles Updates for the Main Menu
 		case ProgramState::MAIN_MENU:
 			mainMenu.UpdateMenu();
 			currentState = mainMenu.currentState;
 			break;
 
 		case ProgramState::IN_GAME:
+
+			
 			game->Update();
 
 			// Sets new game object if restart is requested
@@ -72,13 +93,13 @@ int main() {
 
 			if (game->WantsQuit()) {
 				mainMenu.MenuReset();
-				currentState = ProgramState::RESETTING;
+				currentState = ProgramState::MAIN_MENU;
 			}
 			break;
 		case ProgramState::RESETTING:
 			game.reset();
 			game.emplace();
-			currentState = ProgramState::MAIN_MENU;
+			currentState = ProgramState::IN_GAME;
 			break;
 		}
 
@@ -93,38 +114,47 @@ int main() {
 		// *               DRAW				  *
 		// ====================================
 
-		Color crosshairLine = BLACK; //debug, remove later
-
 		BeginDrawing();
 
 		switch (currentState) {
 		case ProgramState::MAIN_MENU:
-			ClearBackground(SKYBLUE);
-			mainMenu.DrawMenu();
 
-			crosshairLine = BLACK; // debug, remove later
+			if (mainMenu.displayRules) ClearBackground({ 11, 12, 69 });
+			else {
+				ClearBackground({ 69, 25, 11 });
+			}
+			mainMenu.DrawMenu();
 			break;
+
 		case ProgramState::IN_GAME:
 			ClearBackground(DARKGRAY);
 			game->Draw(); // Draws main game elements
-
-			crosshairLine = RAYWHITE; // debug, remove later
 			break;
 		case ProgramState::RESETTING:
 			ClearBackground(BLACK);
-			crosshairLine = BLACK;
 			break;
 		}
 		
 		
 
+
+		
 		// ==== MOUSE POS DEBUG ====
 		Vector2 mp = GetMousePosition();
-		int crossSize = 10; // Crosshair length
-		DrawLine(mp.x - crossSize, mp.y, mp.x + crossSize, mp.y, crosshairLine); // Draws a crosshair at 
-		DrawLine(mp.x, mp.y - crossSize, mp.x, mp.y + crossSize, crosshairLine); // current mouse position
-		DrawText(TextFormat("(%.0f, %.0f)", mp.x, mp.y), mp.x + 12, mp.y - 12, 20, BLACK); // Displays mouse coordinates
+		
+		EndMode2D();
+		EndMode3D();
+		EndTextureMode();
+		EndScissorMode();
 
+		DrawMouse(mp);
+		//int crossSize = 3; // Crosshair length
+		//DrawLine(mp.x - crossSize, mp.y, mp.x + crossSize, mp.y, BLACK); // Draws a crosshair at 
+		//DrawLine(mp.x, mp.y - crossSize, mp.x, mp.y + crossSize, BLACK); // current mouse position
+		//DrawCircle(mp.x, mp.y, 5, BLACK);
+		//Draw
+		//DrawText(TextFormat("(%.0f, %.0f)", mp.x, mp.y), mp.x + 12, mp.y - 12, 20, BLACK); // Displays mouse coordinates
+		
 
 		EndDrawing();
 	}
